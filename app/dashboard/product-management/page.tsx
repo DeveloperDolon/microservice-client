@@ -1,6 +1,8 @@
+"use client";
 import React from "react";
 import { Button, Table } from "antd";
 import { PlusCircleFilled } from "@ant-design/icons";
+import Link from "next/link";
 
 const dataSource = [
   {
@@ -19,19 +21,44 @@ const dataSource = [
 
 const columns = [
   {
-    title: "Name",
+    title: "Product Image",
+    dataIndex: "images",
+    key: "images",
+  },
+  {
+    title: "Product Name",
     dataIndex: "name",
     key: "name",
   },
   {
-    title: "Age",
-    dataIndex: "age",
-    key: "age",
+    title: "Price (BDT)",
+    dataIndex: "price",
+    key: "price",
   },
   {
-    title: "Address",
-    dataIndex: "address",
-    key: "address",
+    title: "Seller Name",
+    dataIndex: "seller?.name",
+    key: "seller?.name",
+  },
+  {
+    title: "Action",
+    key: "action",
+    render: (_, record) => {
+      return (
+        <div className="flex gap-2">
+          <Button type="primary" size={"small"}>
+            <Link href={`/dashboard/product-management`}>
+              Edit
+            </Link>
+          </Button>
+          <Button type="primary" danger size={"small"}>
+            <Link href={`/dashboard/product-management`}>
+              Delete
+            </Link>
+          </Button>
+        </div>
+      );
+    },
   },
 ];
 
