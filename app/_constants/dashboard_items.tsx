@@ -2,6 +2,7 @@ import {
   DesktopOutlined,
   FileOutlined,
   PieChartOutlined,
+  ProductOutlined,
   TeamOutlined,
   UserOutlined,
 } from "@ant-design/icons";
@@ -25,13 +26,9 @@ function getItem(
 }
 
 export const dashboard_items: MenuItem[] = [
-  getItem(<Link href={'/dashboard/product-management'}>Product Management</Link>, "1", <PieChartOutlined />),
-  getItem("Option 2", "2", <DesktopOutlined />),
-  getItem("User", "sub1", <UserOutlined />, [
-    getItem("Tom", "3"),
-    getItem("Bill", "4"),
-    getItem("Alex", "5"),
-  ]),
+  getItem(<Link href={'/dashboard'}>Dashboard</Link>, "1", <PieChartOutlined />),
+  getItem(<Link href={'/dashboard/product-management'}>Product Management</Link>, "2", <ProductOutlined />),
+  getItem(<Link href={'/dashboard/user-management'}>User Management</Link>, "3", <UserOutlined />),
   getItem("Team", "sub2", <TeamOutlined />, [
     getItem("Team 1", "6"),
     getItem("Team 2", "8"),

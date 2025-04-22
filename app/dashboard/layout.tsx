@@ -1,7 +1,7 @@
 "use client";
-
+import { UserOutlined } from "@ant-design/icons";
 import React, { useState } from "react";
-import { Breadcrumb, Layout, Menu, theme } from "antd";
+import { Avatar, Badge, Breadcrumb, Layout, Menu, Space, theme } from "antd";
 import { dashboard_items } from "../_constants/dashboard_items";
 import { usePathname } from "next/navigation";
 
@@ -23,7 +23,9 @@ export default function DashboardLayout({
   const breadcrumbItems = pathArray.map((item) => {
     return {
       href: "/" + pathArray.slice(1, pathArray.indexOf(item) + 1).join("/"),
-      breadcrumbName: (item.charAt(0).toUpperCase() + item.slice(1)).split("-").join(" "),
+      breadcrumbName: (item.charAt(0).toUpperCase() + item.slice(1))
+        .split("-")
+        .join(" "),
     };
   });
 
@@ -47,7 +49,22 @@ export default function DashboardLayout({
         />
       </Sider>
       <Layout>
-        <Header style={{ padding: 0, background: colorBgContainer }} />
+        <Header
+          style={{
+            padding: "0px 50px",
+            background: colorBgContainer,
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        > 
+          <div></div>
+          <Space size={24}>
+            <Badge count={1}>
+              <Avatar shape="square" icon={<UserOutlined />} />
+            </Badge>
+          </Space>
+        </Header>
         <Content style={{ margin: "0 16px" }}>
           <Breadcrumb routes={breadcrumbItems} style={{ margin: "16px 0" }} />
           <div
