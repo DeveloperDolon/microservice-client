@@ -22,8 +22,8 @@ export default function DashboardLayout({
 
   const breadcrumbItems = pathArray.map((item) => {
     return {
-      path: "/"+item,
-      breadcrumbName: item.charAt(0).toUpperCase() + item.slice(1),
+      href: "/" + pathArray.slice(1, pathArray.indexOf(item) + 1).join("/"),
+      breadcrumbName: (item.charAt(0).toUpperCase() + item.slice(1)).split("-").join(" "),
     };
   });
 
