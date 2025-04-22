@@ -30,6 +30,7 @@ export default function DashboardLayout({
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Sider
+        width={250}
         collapsible
         collapsed={collapsed}
         onCollapse={(value) => setCollapsed(value)}
