@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { Breadcrumb, Layout, Menu, theme } from "antd";
 import { dashboard_items } from "../_constants/dashboard_items";
+import { usePathname } from "next/navigation";
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -16,6 +17,16 @@ export default function DashboardLayout({
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
 
+  const path = usePathname();
+  const pathArray = path.split("/");
+
+  const breadcrumbItems = pathArray.map((item) => {
+    return {
+      path: "/"+item,
+      breadcrumbName: item.charAt(0).toUpperCase() + item.slice(1),
+    };
+  });
+
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Sider
@@ -26,6 +37,7 @@ export default function DashboardLayout({
         <div className="demo-logo-vertical text-white md:text-xl sm:text-lg text-base font-semibold text-center py-4">
           This is the logo
         </div>
+
         <Menu
           theme="dark"
           defaultSelectedKeys={["1"]}
@@ -36,10 +48,7 @@ export default function DashboardLayout({
       <Layout>
         <Header style={{ padding: 0, background: colorBgContainer }} />
         <Content style={{ margin: "0 16px" }}>
-          <Breadcrumb style={{ margin: "16px 0" }}>
-            <Breadcrumb.Item>User</Breadcrumb.Item>
-            <Breadcrumb.Item>Bill</Breadcrumb.Item>
-          </Breadcrumb>
+          <Breadcrumb routes={breadcrumbItems} style={{ margin: "16px 0" }} />
           <div
             style={{
               padding: 24,
@@ -52,7 +61,8 @@ export default function DashboardLayout({
           </div>
         </Content>
         <Footer style={{ textAlign: "center" }}>
-          ECommerce Dashboard ©{new Date().getFullYear()} Created by DeveloperDolon
+          ECommerce Dashboard ©{new Date().getFullYear()} Created by
+          DeveloperDolon
         </Footer>
       </Layout>
     </Layout>
