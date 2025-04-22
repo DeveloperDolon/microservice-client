@@ -6,6 +6,7 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 import type { MenuProps } from "antd";
+import Link from "next/link";
 
 type MenuItem = Required<MenuProps>["items"][number];
 
@@ -24,7 +25,7 @@ function getItem(
 }
 
 export const dashboard_items: MenuItem[] = [
-  getItem("Option 1", "1", <PieChartOutlined />),
+  getItem(<Link href={'/dashboard/product-management'}>Product Management</Link>, "1", <PieChartOutlined />),
   getItem("Option 2", "2", <DesktopOutlined />),
   getItem("User", "sub1", <UserOutlined />, [
     getItem("Tom", "3"),
