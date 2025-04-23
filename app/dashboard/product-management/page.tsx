@@ -3,6 +3,7 @@ import React from "react";
 import { Button, Table } from "antd";
 import { PlusCircleFilled } from "@ant-design/icons";
 import Link from "next/link";
+import Search from "antd/es/input/Search";
 
 const dataSource = [
   {
@@ -43,18 +44,15 @@ const columns = [
   {
     title: "Action",
     key: "action",
-    render: (_, record) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    render: (_, record: unknown) => {
       return (
         <div className="flex gap-2">
           <Button type="primary" size={"small"}>
-            <Link href={`/dashboard/product-management`}>
-              Edit
-            </Link>
+            <Link href={`/dashboard/product-management`}>Edit</Link>
           </Button>
           <Button type="primary" danger size={"small"}>
-            <Link href={`/dashboard/product-management`}>
-              Delete
-            </Link>
+            <Link href={`/dashboard/product-management`}>Delete</Link>
           </Button>
         </div>
       );
@@ -66,9 +64,20 @@ const page = () => {
   return (
     <div>
       <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold">Product Management</h1>
+        <h1 className="md:text-2xl text-lg font-bold">Product Management</h1>
+
+        <Search
+          className="md:w-[500px] w-[300px]"
+          placeholder="input search text"
+          enterButton="Search"
+          size="large"
+          loading={false}
+        />
+
         <Button type="primary" icon={<PlusCircleFilled />} size={"large"}>
-          Add Product
+          <Link href={`/dashboard/product-management/create-product`}>
+            <span className="hidden md:inline">Create Product</span>
+          </Link>
         </Button>
       </div>
       <Table dataSource={dataSource} columns={columns} />
