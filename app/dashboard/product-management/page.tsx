@@ -74,7 +74,9 @@ const page = () => {
         />
 
         <Button type="primary" icon={<PlusCircleFilled />} size={"large"}>
-          Add Product
+          <Link href={`/dashboard/product-management/create-product`}>
+            <span className="hidden md:inline">Create Product</span>
+          </Link>
         </Button>
       </div>
       <Table dataSource={dataSource} columns={columns} />
