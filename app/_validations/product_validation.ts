@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const product_validation = z.object({
+export const product_validation_schema = z.object({
     name: z.string().min(1, "Product name is required"),
     images: z.array(z.instanceof(File)).min(1, "At least one image is required"),
     discount: z.number().optional(),
@@ -15,4 +15,4 @@ export const product_validation = z.object({
     brand_id: z.string().min(1, "Brand is required"),
 }); 
 
-export type ProductValidationType = z.infer<typeof product_validation>;
+export type ProductValidationType = z.infer<typeof product_validation_schema>;

@@ -1,10 +1,10 @@
 export type ProductType = {
   name: string;
-  images: string[];
+  images: File[];
   discount?: number;
   price: number;
   description: string;
-  discount_type: "percentage" | "amount";
+  discount_type?: "percentage" | "amount";
   ingredients?: string[];
   shipping_cost: number;
   benefit?: string;

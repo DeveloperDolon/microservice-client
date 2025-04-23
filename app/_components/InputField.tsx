@@ -39,7 +39,7 @@ const InputField = ({
             placeholder={placeholder}
             {...register(name, options)}
           />
-          {error && <p className="">{error}</p>}
+          {error && <p className="md:text-sm text-xs font-light text-red-500">{error}</p>}
         </>
       ) : type === "select" ? (
         <>
@@ -48,7 +48,9 @@ const InputField = ({
           </label>
           <Select
             className="mt-1"
+            size="large"
             showSearch
+            variant="filled"
             placeholder={placeholder}
             {...register(name, options)}
             filterOption={(input, option) =>
@@ -60,7 +62,7 @@ const InputField = ({
               { value: "3", label: "Tom" },
             ]}
           />
-          {error && <p className="">{error}</p>}
+          {error && <p className="md:text-sm text-xs font-light text-red-500">{error}</p>}
         </>
       ) : type === "checkbox" ? (
         <>
@@ -70,9 +72,9 @@ const InputField = ({
           <Checkbox className="mt-1" type={type} {...register(name, options)}>
             Checkbox
           </Checkbox>
-          {error && <p className="">{error}</p>}
+          {error && <p className="md:text-sm text-xs font-light text-red-500">{error}</p>}
         </>
-      ) : type === "text" ? (
+      ) : type === "text" || type === "number" ? (
         <>
           <label htmlFor={name} className="text-sm">
             {label}
@@ -85,7 +87,7 @@ const InputField = ({
             placeholder={placeholder}
             {...register(name, options)}
           />
-          {error && <p className="">{error}</p>}
+          {error && <p className="md:text-sm text-xs font-light text-red-500">{error}</p>}
         </>
       ) : (
         ""
