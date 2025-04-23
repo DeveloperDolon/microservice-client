@@ -14,3 +14,5 @@ export const product_validation = z.object({
     likes: z.number().optional(),
     brand_id: z.string().min(1, "Brand is required"),
 }); 
+
+export type ProductValidationType = z.infer<typeof product_validation>;
