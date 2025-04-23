@@ -1,6 +1,5 @@
 import {
   AuditOutlined,
-  FileOutlined,
   PieChartOutlined,
   ProductOutlined,
   TeamOutlined,
