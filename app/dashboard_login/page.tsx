@@ -9,31 +9,36 @@ import {
 import { PoweroffOutlined } from "@ant-design/icons";
 import InputField from "../_components/InputField";
 import bgImage from "../_assets/loginbg.png";
-import { Button, Switch } from "antd";
+import { Button, message, Switch } from "antd";
 import { useState } from "react";
+import { useLoginMutation } from "../_store/api/auth.api";
 
 const LoginPage = () => {
   const methods = useForm<LoginValidationType>({
     resolver: zodResolver(auth_login_validation),
     mode: "onTouched",
   });
-
+  const [messageApi, contextHolder] = message.useMessage();
   const [pageSwitch, setPageSwitch] = useState<boolean>(true);
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [login, { isLoading }] = useLoginMutation();
 
   const onSubmit = async (data: LoginValidationType) => {
     try {
-      setIsSubmitting(true);
-      console.log("Form submitted:", data);
+      const result = await login(data);
+      console.log(result)
+      if (result?.data?.success) {
+        messageApi.success("Login successful!");
+      } else {
+        messageApi.error(result?.error?.data?.message);
+      }
     } catch (error) {
       console.error("Submission error:", error);
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
   return (
     <div>
+      {contextHolder}
       <FormProvider {...methods}>
         <div
           className="flex items-center justify-center min-h-screen"
@@ -81,10 +86,10 @@ const LoginPage = () => {
                       htmlType="submit"
                       type="primary"
                       icon={<PoweroffOutlined />}
-                      loading={isSubmitting}
-                      disabled={!methods.formState.isValid || isSubmitting}
+                      loading={isLoading}
+                      disabled={!methods.formState.isValid || isLoading}
                     >
-                      {isSubmitting ? "Processing..." : "Login"}
+                      {isLoading ? "Processing..." : "Login"}
                     </Button>
                   </div>
                 </form>
