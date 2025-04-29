@@ -25,11 +25,15 @@ const LoginPage = () => {
   const onSubmit = async (data: LoginValidationType) => {
     try {
       const result = await login(data);
-      console.log(result)
+      
       if (result?.data?.success) {
         messageApi.success("Login successful!");
       } else {
-        messageApi.error(result?.error?.data?.message);
+        if (result?.error && "data" in result.error) {
+          messageApi.error((result.error.data as { message: string })?.message);
+        } else {
+          messageApi.error("An unknown error occurred.");
+        }
       }
     } catch (error) {
       console.error("Submission error:", error);
