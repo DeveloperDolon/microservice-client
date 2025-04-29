@@ -45,7 +45,7 @@ const columns = [
     title: "Action",
     key: "action",
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    render: (_, record: unknown) => {
+    render: (_: unknown, record: unknown) => {
       return (
         <div className="flex gap-2">
           <Button type="primary" size={"small"}>
