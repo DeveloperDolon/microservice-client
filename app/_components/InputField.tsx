@@ -2,6 +2,7 @@ import { Input, Select } from "antd";
 import Checkbox from "antd/es/checkbox/Checkbox";
 import TextArea from "antd/es/input/TextArea";
 import { RegisterOptions, useFormContext } from "react-hook-form";
+import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 
 interface InputFieldProps {
   name: string;
@@ -39,7 +40,11 @@ const InputField = ({
             placeholder={placeholder}
             {...register(name, options)}
           />
-          {error && <p className="md:text-sm text-xs font-light text-red-500">{error}</p>}
+          {error && (
+            <p className="md:text-sm text-xs font-light text-red-500">
+              {error}
+            </p>
+          )}
         </>
       ) : type === "select" ? (
         <>
@@ -62,7 +67,11 @@ const InputField = ({
               { value: "3", label: "Tom" },
             ]}
           />
-          {error && <p className="md:text-sm text-xs font-light text-red-500">{error}</p>}
+          {error && (
+            <p className="md:text-sm text-xs font-light text-red-500">
+              {error}
+            </p>
+          )}
         </>
       ) : type === "checkbox" ? (
         <>
@@ -72,9 +81,13 @@ const InputField = ({
           <Checkbox className="mt-1" type={type} {...register(name, options)}>
             Checkbox
           </Checkbox>
-          {error && <p className="md:text-sm text-xs font-light text-red-500">{error}</p>}
+          {error && (
+            <p className="md:text-sm text-xs font-light text-red-500">
+              {error}
+            </p>
+          )}
         </>
-      ) : type === "text" || type === "number" ? (
+      ) : type === "text" || type === "number" || type === "email" ? (
         <>
           <label htmlFor={name} className="text-sm">
             {label}
@@ -87,7 +100,33 @@ const InputField = ({
             placeholder={placeholder}
             {...register(name, options)}
           />
-          {error && <p className="md:text-sm text-xs font-light text-red-500">{error}</p>}
+          {error && (
+            <p className="md:text-sm text-xs font-light text-red-500">
+              {error}
+            </p>
+          )}
+        </>
+      ) : type === "password" ? (
+        <>
+          <label htmlFor={name} className="text-sm">
+            {label}
+          </label>
+          <Input.Password
+            className="mt-1"
+            size="large"
+            variant="filled"
+            type={type}
+            placeholder={placeholder}
+            {...register(name, options)}
+            iconRender={(visible) =>
+              visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
+            }
+          />
+          {error && (
+            <p className="md:text-sm text-xs font-light text-red-500">
+              {error}
+            </p>
+          )}
         </>
       ) : (
         ""
