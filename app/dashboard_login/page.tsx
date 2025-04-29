@@ -2,38 +2,34 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormProvider, useForm } from "react-hook-form";
-import { auth_login_validation } from "../_validations/auth_validation";
-import { PoweroffOutlined, SyncOutlined } from "@ant-design/icons";
+import {
+  auth_login_validation,
+  LoginValidationType,
+} from "../_validations/auth_validation";
+import { PoweroffOutlined } from "@ant-design/icons";
 import InputField from "../_components/InputField";
 import bgImage from "../_assets/loginbg.png";
 import { Button, Switch } from "antd";
 import { useState } from "react";
 
-const page = () => {
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  const methods = useForm({
+const LoginPage = () => {
+  const methods = useForm<LoginValidationType>({
     resolver: zodResolver(auth_login_validation),
+    mode: "onTouched",
   });
 
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  const [loadings, setLoadings] = useState<boolean[]>([]);
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  const [pageSwitch, setPageSwitch] = useState<boolean>(false);
+  const [pageSwitch, setPageSwitch] = useState<boolean>(true);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
-  const enterLoading = (index: number) => {
-    setLoadings((prevLoadings) => {
-      const newLoadings = [...prevLoadings];
-      newLoadings[index] = true;
-      return newLoadings;
-    });
-
-    setTimeout(() => {
-      setLoadings((prevLoadings) => {
-        const newLoadings = [...prevLoadings];
-        newLoadings[index] = false;
-        return newLoadings;
-      });
-    }, 3000);
+  const onSubmit = async (data: LoginValidationType) => {
+    try {
+      setIsSubmitting(true);
+      console.log("Form submitted:", data);
+    } catch (error) {
+      console.error("Submission error:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -52,7 +48,7 @@ const page = () => {
               checkedChildren="Login"
               unCheckedChildren="Signup"
               defaultChecked
-              className="font-bold"
+              className="font-bold mb-4"
               onChange={() => setPageSwitch(!pageSwitch)}
             />
 
@@ -62,13 +58,15 @@ const page = () => {
                   Login
                 </h1>
 
-                <form className="space-y-6">
+                <form
+                  className="space-y-6"
+                  onSubmit={methods.handleSubmit(onSubmit)}
+                >
                   <InputField
                     name="email"
                     type="email"
                     placeholder="Enter your email"
                     label="Email"
-                    options={{ required: "Email is required." }}
                   />
 
                   <InputField
@@ -76,17 +74,17 @@ const page = () => {
                     type="password"
                     placeholder="Enter your password"
                     label="Password"
-                    options={{ required: "Password is required" }}
                   />
 
                   <div>
                     <Button
+                      htmlType="submit"
                       type="primary"
                       icon={<PoweroffOutlined />}
-                      loading={loadings[3] && { icon: <SyncOutlined spin /> }}
-                      onClick={() => enterLoading(3)}
+                      loading={isSubmitting}
+                      disabled={!methods.formState.isValid || isSubmitting}
                     >
-                      Loading Icon
+                      {isSubmitting ? "Processing..." : "Login"}
                     </Button>
                   </div>
                 </form>
@@ -96,35 +94,7 @@ const page = () => {
                 <h1 className="md:text-2xl sm:text-xl text-lg font-semibold pb-4 pt-2">
                   Signup
                 </h1>
-
-                <form className="space-y-6">
-                  <InputField
-                    name="email"
-                    type="email"
-                    placeholder="Enter your email"
-                    label="Email"
-                    options={{ required: "Email is required." }}
-                  />
-
-                  <InputField
-                    name="password"
-                    type="password"
-                    placeholder="Enter your password"
-                    label="Password"
-                    options={{ required: "Password is required" }}
-                  />
-
-                  <div>
-                    <Button
-                      type="primary"
-                      icon={<PoweroffOutlined />}
-                      loading={loadings[3] && { icon: <SyncOutlined spin /> }}
-                      onClick={() => enterLoading(3)}
-                    >
-                      Loading Icon
-                    </Button>
-                  </div>
-                </form>
+                <p>Please contact with admin for user request.</p>
               </>
             )}
           </div>
@@ -134,4 +104,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default LoginPage;
