@@ -19,14 +19,14 @@ const baseQuery = fetchBaseQuery({
 
 export const baseQueryWithAuth = async (args: string | FetchArgs, api: BaseQueryApi, extraOptions: object) => {
   const result = await baseQuery(args, api, extraOptions);
-  
-  if ((result?.error?.data as { message?: string })?.message === 'invalid token') {
+
+  if ((result?.error?.data as { message?: string })?.message === 'Unauthenticated.') {
     
     console.log("Access token expired or invalid. Logging out...");
 
     localStorage.removeItem("authToken");
     
-    window.location.href = "/login";
+    window.location.href = "/dashboard_login";
   }
 
   return result;

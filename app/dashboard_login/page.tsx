@@ -12,6 +12,7 @@ import bgImage from "../_assets/loginbg.png";
 import { Button, message, Switch } from "antd";
 import { useState } from "react";
 import { useLoginMutation } from "../_store/api/auth.api";
+import { useRouter } from "next/navigation";
 
 const LoginPage = () => {
   const methods = useForm<LoginValidationType>({
@@ -21,15 +22,23 @@ const LoginPage = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const [pageSwitch, setPageSwitch] = useState<boolean>(true);
   const [login, { isLoading }] = useLoginMutation();
+  const router = useRouter();
 
   const onSubmit = async (data: LoginValidationType) => {
     try {
       const result = await login(data);
-      console.log(result)
+
       if (result?.data?.success) {
+        localStorage.setItem("authToken", result?.data?.token);
         messageApi.success("Login successful!");
+
+        router.push("/dashboard");
       } else {
-        messageApi.error(result?.error?.data?.message);
+        if (result?.error && "data" in result.error) {
+          messageApi.error((result.error.data as { message: string })?.message);
+        } else {
+          messageApi.error("An unknown error occurred.");
+        }
       }
     } catch (error) {
       console.error("Submission error:", error);
