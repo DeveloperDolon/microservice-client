@@ -3,7 +3,8 @@ import { UserOutlined } from "@ant-design/icons";
 import React, { useState } from "react";
 import { Avatar, Badge, Breadcrumb, Layout, Menu, Space, theme } from "antd";
 import { dashboard_items } from "../_constants/dashboard_items";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useMeQuery } from "../_store/api/auth.api";
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -13,6 +14,9 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const [collapsed, setCollapsed] = useState(false);
+  const { data: user, isFetching } = useMeQuery(1);
+  const router = useRouter();
+
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
@@ -28,6 +32,12 @@ export default function DashboardLayout({
         .join(" "),
     };
   });
+
+  if (!isFetching) {
+    if (!user?.success) {
+      router.push("/dashboard_login");
+    }
+  }
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
@@ -57,7 +67,7 @@ export default function DashboardLayout({
             justifyContent: "space-between",
             alignItems: "center",
           }}
-        > 
+        >
           <div></div>
           <Space size={24}>
             <Badge count={1}>
@@ -67,7 +77,7 @@ export default function DashboardLayout({
         </Header>
         <Content style={{ margin: "0 16px" }}>
           <Breadcrumb routes={breadcrumbItems} style={{ margin: "16px 0" }} />
-          
+
           <div
             style={{
               padding: 24,
