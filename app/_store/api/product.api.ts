@@ -15,7 +15,10 @@ const productApi = baseApi.injectEndpoints({
             params: params,
             method: "GET"
         })
-    })
+    }),
+    productShow: builder.query({
+        query: (id) => (`/product/show/${id}`)
+    }),
   }),
 });
 
