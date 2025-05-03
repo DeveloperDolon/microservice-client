@@ -138,6 +138,9 @@ const InputField = ({
                     variant="filled"
                     type={type}
                     placeholder={placeholder}
+                    onChange={(e) =>
+                      field.onChange(type === "number" ? +e.target.value : e.target.value)
+                    }
                   />
                 </>
               );
