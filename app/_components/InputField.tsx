@@ -126,6 +126,25 @@ const InputField = ({
                   />
                 </>
               );
+
+            case "tag":
+              return (
+                <>
+                  <label htmlFor={name} className="text-sm">
+                    {label}
+                  </label>
+                  <Select
+                    mode="tags"
+                    {...field}
+                    className="mt-1"
+                    size="large"
+                    showSearch
+                    variant="filled"
+                    placeholder={placeholder}
+                    options={selectOptions}
+                  />
+                </>
+              );
             default:
               return (
                 <>

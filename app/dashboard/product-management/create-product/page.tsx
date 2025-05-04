@@ -98,6 +98,23 @@ const Page = () => {
           />
 
           <InputField
+            name="ingredients"
+            label="Ingredients"
+            placeholder="Input product ingredients "
+            type="tag"
+            selectOptions={[
+              {
+                label: "Percentage",
+                value: "percentage",
+              },
+              {
+                label: "Amount",
+                value: "amount",
+              },
+            ]}
+          />
+
+          <InputField
             name="price"
             label="Product Price"
             placeholder="Enter product price"
@@ -105,13 +122,6 @@ const Page = () => {
             options={{
               required: "Product price is required",
             }}
-          />
-
-          <InputField
-            name="ingredients"
-            label="Product Ingredients"
-            placeholder="Select product ingredients"
-            type="select"
           />
 
           <InputField
