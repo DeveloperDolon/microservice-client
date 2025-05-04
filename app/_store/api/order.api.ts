@@ -9,7 +9,15 @@ const orderApi = baseApi.injectEndpoints({
       }),
       providesTags: ["order"],
     }),
+    orderList: builder.query({
+      query: (params) => ({
+        url: "/order/list",
+        method: "GET",
+        params,
+      }),
+      providesTags: ["order"],
+    }),
   }),
 });
 
-export const { useShowOrderQuery } = orderApi;
+export const { useShowOrderQuery, useOrderListQuery } = orderApi;
