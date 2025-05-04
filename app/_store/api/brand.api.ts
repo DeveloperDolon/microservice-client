@@ -30,6 +30,13 @@ const brandApi = baseApi.injectEndpoints({
       query: (id) => `/brand/show/${id}`,
       providesTags: ["brand"],
     }),
+    brandDelete: builder.mutation({
+      query: (id) => ({
+        url: `/brand/delete/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["brand"],
+    }),
   }),
 });
 
@@ -37,5 +44,6 @@ export const {
   useBrandCreateMutation,
   useBrandListQuery,
   useBrandUpdateMutation,
-  useBrandShowQuery
+  useBrandShowQuery,
+  useBrandDeleteMutation,
 } = brandApi;
