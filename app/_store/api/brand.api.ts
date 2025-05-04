@@ -16,17 +16,26 @@ const brandApi = baseApi.injectEndpoints({
         params: params,
         method: "GET",
       }),
-      providesTags: ["brand"]
+      providesTags: ["brand"],
     }),
     brandUpdate: builder.mutation({
-      query: ({id, payload}) => ({
+      query: ({ id, payload }) => ({
         url: `/brand/update/${id}`,
         body: payload,
-        method: "PUT"
+        method: "PUT",
       }),
-      invalidatesTags: ["brand"]
-    })
+      invalidatesTags: ["brand"],
+    }),
+    brandShow: builder.query({
+      query: (id) => `/brand/show/${id}`,
+      providesTags: ["brand"],
+    }),
   }),
 });
 
-export const { useBrandCreateMutation, useBrandListQuery, useBrandUpdateMutation } = brandApi;
+export const {
+  useBrandCreateMutation,
+  useBrandListQuery,
+  useBrandUpdateMutation,
+  useBrandShowQuery
+} = brandApi;
