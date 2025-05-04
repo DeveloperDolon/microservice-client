@@ -85,6 +85,16 @@ const Page = () => {
             label="Product Discount Type"
             placeholder="Select product discount type"
             type="select"
+            selectOptions={[
+              {
+                label: "Percentage",
+                value: "percentage",
+              },
+              {
+                label: "Amount",
+                value: "amount",
+              },
+            ]}
           />
 
           <InputField
