@@ -8,6 +8,7 @@ const productApi = baseApi.injectEndpoints({
         method: "POST",
         body: payload,
       }),
+      invalidatesTags: ["product"],
     }),
     productList: builder.query({
       query: (params) => ({
@@ -15,9 +16,11 @@ const productApi = baseApi.injectEndpoints({
         params: params,
         method: "GET",
       }),
+      providesTags: ["product"],
     }),
     productShow: builder.query({
       query: (id) => `/product/show/${id}`,
+      providesTags: ["product"],
     }),
     productUpdate: builder.mutation({
       query: ({ id, payload }) => ({
@@ -25,12 +28,14 @@ const productApi = baseApi.injectEndpoints({
         body: payload,
         method: "PUT",
       }),
+      invalidatesTags: ["product"],
     }),
     productDelete: builder.mutation({
       query: (id) => ({
         url: `/product/delete/${id}`,
         method: "DELETE",
       }),
+      invalidatesTags: ["product"],
     }),
   }),
 });
