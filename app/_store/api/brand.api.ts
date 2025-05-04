@@ -18,7 +18,15 @@ const brandApi = baseApi.injectEndpoints({
       }),
       providesTags: ["brand"]
     }),
+    brandUpdate: builder.mutation({
+      query: ({id, payload}) => ({
+        url: `/brand/update/${id}`,
+        body: payload,
+        method: "PUT"
+      }),
+      invalidatesTags: ["brand"]
+    })
   }),
 });
 
-export const { useBrandCreateMutation, useBrandListQuery } = brandApi;
+export const { useBrandCreateMutation, useBrandListQuery, useBrandUpdateMutation } = brandApi;
