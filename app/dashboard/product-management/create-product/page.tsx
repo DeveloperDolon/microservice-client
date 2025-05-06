@@ -140,24 +140,27 @@ const Page = () => {
             placeholder="Select product brand"
             type="select"
           />
-
-          <Controller
-            name="images"
-            control={methods.control}
-            render={({ field }) => (
-              <ImgCrop {...field} rotationSlider>
-                <Upload
-                  action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
-                  listType="picture-card"
-                  fileList={fileList}
-                  onChange={onChange}
-                  onPreview={onPreview}
-                >
-                  {fileList.length < 5 && "+ Upload"}
-                </Upload>
-              </ImgCrop>
-            )}
-          />
+          <div>
+            <label htmlFor="images" className="text-sm inline-block pb-1">Images</label>
+            <Controller
+              name="images"
+              control={methods.control}
+              render={({ field }) => (
+                <ImgCrop {...field} rotationSlider>
+                  <Upload
+                    {...field}
+                    action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
+                    listType="picture-card"
+                    fileList={fileList}
+                    onChange={onChange}
+                    onPreview={onPreview}
+                  >
+                    {fileList.length < 5 && "+ Upload"}
+                  </Upload>
+                </ImgCrop>
+              )}
+            />
+          </div>
 
           <InputField
             name="description"
