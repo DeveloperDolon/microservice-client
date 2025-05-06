@@ -13,6 +13,10 @@ interface InputFieldProps {
   type: string;
   options?: RegisterOptions;
   className?: string;
+  selectOptions?: {
+    label: string;
+    value: string;
+  }[];
 }
 
 const InputField = ({
@@ -22,6 +26,7 @@ const InputField = ({
   type,
   options,
   className,
+  selectOptions,
 }: InputFieldProps) => {
   const {
     control,
@@ -83,11 +88,7 @@ const InputField = ({
                         .toLowerCase()
                         .includes(input.toLowerCase())
                     }
-                    options={[
-                      { value: "1", label: "Jack" },
-                      { value: "2", label: "Lucy" },
-                      { value: "3", label: "Tom" },
-                    ]}
+                    options={selectOptions}
                   />
                 </>
               );
@@ -125,6 +126,25 @@ const InputField = ({
                   />
                 </>
               );
+
+            case "tag":
+              return (
+                <>
+                  <label htmlFor={name} className="text-sm">
+                    {label}
+                  </label>
+                  <Select
+                    mode="tags"
+                    {...field}
+                    className="mt-1"
+                    size="large"
+                    showSearch
+                    variant="filled"
+                    placeholder={placeholder}
+                    options={selectOptions}
+                  />
+                </>
+              );
             default:
               return (
                 <>
@@ -139,7 +159,9 @@ const InputField = ({
                     type={type}
                     placeholder={placeholder}
                     onChange={(e) =>
-                      field.onChange(type === "number" ? +e.target.value : e.target.value)
+                      field.onChange(
+                        type === "number" ? +e.target.value : e.target.value
+                      )
                     }
                   />
                 </>
