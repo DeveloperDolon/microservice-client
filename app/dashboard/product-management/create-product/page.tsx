@@ -7,12 +7,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { product_validation_schema } from "@/app/_validations/product_validation";
 import { ProductType } from "@/app/_types/product_types";
 import { Button, GetProp, Upload, UploadFile, UploadProps } from "antd";
-import {PlusOutlined} from "@ant-design/icons";
+import { PlusOutlined } from "@ant-design/icons";
 import ImgCrop from "antd-img-crop";
 
 type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
 
 const Page = () => {
+  const [variants, setVariants] = useState<React.ReactNode[]>([]);
+
   const methods = useForm<ProductType>({
     resolver: zodResolver(product_validation_schema),
   });
@@ -49,6 +51,34 @@ const Page = () => {
     imgWindow?.document.write(image.outerHTML);
   };
 
+  const addVariant = () => {
+    const variant = (
+      <div className="grid md:grid-cols-3 grid-cols-1 md:gap-10 gap-4 w-full">
+        <InputField
+          name="variants.name[]"
+          label="Variant name"
+          placeholder="Enter variant name"
+          type="text"
+        />
+
+        <InputField
+          name="variants.stock[]"
+          label="Variant stock"
+          placeholder="Enter variant stock"
+          type="number"
+        />
+
+        <InputField
+          name="variants.price[]"
+          label="Variant price"
+          placeholder="Enter variant price"
+          type="number"
+        />
+      </div>
+    );
+    setVariants((prevVariants) => [...prevVariants, variant]);
+  };
+
   return (
     <div>
       <h1 className="md:text-2xl text-lg font-bold text-center">
@@ -58,7 +88,7 @@ const Page = () => {
       <FormProvider {...methods}>
         <form
           onSubmit={methods.handleSubmit(onSubmit)}
-          className="grid gap-4 grid-cols-2 mt-6"
+          className="grid gap-4 md:grid-cols-2 grid-cols-1 mt-6"
         >
           <InputField
             name="name"
@@ -187,12 +217,18 @@ const Page = () => {
             type="textarea"
           />
 
-          <div>
-            <div>
-              
-            </div>
+          <div className="col-span-2 space-y-4">
+            {variants.map((variant, index) => (
+              <React.Fragment key={index}>{variant}</React.Fragment>
+            ))}
 
-            <Button icon={<PlusOutlined />}>Add Variant</Button>
+            <Button
+              onClick={addVariant}
+              htmlType="button"
+              icon={<PlusOutlined />}
+            >
+              Add Variant
+            </Button>
           </div>
 
           <Button className="col-span-2" type="primary" htmlType="submit">
