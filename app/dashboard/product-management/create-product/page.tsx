@@ -189,7 +189,7 @@ const Page = () => {
               name="images"
               control={methods.control}
               render={({ field }) => (
-                <ImgCrop {...field} rotationSlider>
+                <ImgCrop rotationSlider>
                   <Upload
                     {...field}
                     action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
@@ -203,6 +203,11 @@ const Page = () => {
                 </ImgCrop>
               )}
             />
+            {methods.formState.errors.images && (
+              <p className="md:text-sm text-xs font-light text-red-500">
+                {methods.formState.errors.images.message}
+              </p>
+            )}
           </div>
 
           <InputField
