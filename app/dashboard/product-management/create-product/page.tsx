@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { product_validation_schema } from "@/app/_validations/product_validation";
 import { ProductType } from "@/app/_types/product_types";
 import { Button, GetProp, Upload, UploadFile, UploadProps } from "antd";
+import {PlusOutlined} from "@ant-design/icons";
 import ImgCrop from "antd-img-crop";
 
 type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
@@ -140,8 +141,11 @@ const Page = () => {
             placeholder="Select product brand"
             type="select"
           />
+
           <div>
-            <label htmlFor="images" className="text-sm inline-block pb-1">Images</label>
+            <label htmlFor="images" className="text-sm inline-block pb-1">
+              Images
+            </label>
             <Controller
               name="images"
               control={methods.control}
@@ -182,6 +186,14 @@ const Page = () => {
             placeholder="Enter product benefit"
             type="textarea"
           />
+
+          <div>
+            <div>
+              
+            </div>
+
+            <Button icon={<PlusOutlined />}>Add Variant</Button>
+          </div>
 
           <Button className="col-span-2" type="primary" htmlType="submit">
             Submit
