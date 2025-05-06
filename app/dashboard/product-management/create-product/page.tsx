@@ -9,6 +9,7 @@ import { ProductType } from "@/app/_types/product_types";
 import { Button, GetProp, Upload, UploadFile, UploadProps } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import ImgCrop from "antd-img-crop";
+import { useBrandListQuery } from "@/app/_store/api/brand.api";
 
 type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
 
@@ -18,6 +19,8 @@ const Page = () => {
   const methods = useForm<ProductType>({
     resolver: zodResolver(product_validation_schema),
   });
+
+  const { data: brands } = useBrandListQuery({});
 
   const onSubmit = (data: ProductType) => {
     console.log(data);
@@ -170,6 +173,12 @@ const Page = () => {
             label="Brand"
             placeholder="Select product brand"
             type="select"
+            selectOptions={brands?.data?.map(
+              (item: { name: string; id: string }) => ({
+                label: item?.name,
+                value: item?.id,
+              })
+            )}
           />
 
           <div>
@@ -217,7 +226,8 @@ const Page = () => {
             type="textarea"
           />
 
-          <div className="col-span-2 space-y-4">
+          <div className="col-span-2 space-y-4 shadow-lg p-6 rounded-lg">
+            <h1 className="md:text-xl text-lg font-semibold">Variants</h1>
             {variants.map((variant, index) => (
               <React.Fragment key={index}>{variant}</React.Fragment>
             ))}
