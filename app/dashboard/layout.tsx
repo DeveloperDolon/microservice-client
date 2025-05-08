@@ -76,7 +76,7 @@ export default function DashboardLayout({
           </Space>
         </Header>
         <Content style={{ margin: "0 16px" }}>
-          <Breadcrumb routes={breadcrumbItems} style={{ margin: "16px 0" }} />
+          <Breadcrumb items={breadcrumbItems} style={{ margin: "16px 0" }} />
 
           <div
             style={{

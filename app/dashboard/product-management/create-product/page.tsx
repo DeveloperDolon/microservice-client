@@ -16,13 +16,13 @@ type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
 const Page = () => {
   const [variants, setVariants] = useState<React.ReactNode[]>([]);
 
-  const methods = useForm<ProductType>({
+  const methods = useForm<ProductType<File[]>>({
     resolver: zodResolver(product_validation_schema),
   });
 
   const { data: brands } = useBrandListQuery({});
 
-  const onSubmit = (data: ProductType) => {
+  const onSubmit = (data: ProductType<File[]>) => {
     console.log(data);
   };
 
