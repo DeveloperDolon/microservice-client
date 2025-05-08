@@ -1,30 +1,32 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { Button, Table } from "antd";
 import { PlusCircleFilled } from "@ant-design/icons";
 import Link from "next/link";
 import Search from "antd/es/input/Search";
-
-const dataSource = [
-  {
-    key: "1",
-    name: "Mike",
-    age: 32,
-    address: "10 Downing Street",
-  },
-  {
-    key: "2",
-    name: "John",
-    age: 42,
-    address: "10 Downing Street",
-  },
-];
+import { useProductListQuery } from "@/app/_store/api/product.api";
+import Image from "next/image";
+import { ProductType } from "@/app/_types/product_types";
 
 const columns = [
   {
     title: "Product Image",
     dataIndex: "images",
     key: "images",
+    render: (_: unknown, record: ProductType<string>) => {
+      const imageArray = record?.images?.split(",");
+      
+      return (
+        <>
+          <Image 
+            width={100}
+            height={100}
+            src={imageArray[0]}
+            alt="Product-Image"
+          />
+        </>
+      )
+    }
   },
   {
     title: "Product Name",
@@ -60,7 +62,12 @@ const columns = [
   },
 ];
 
-const page = () => {
+const ProductManagement = () => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [params, setParams] = useState({page: 1, limit: 10});
+  const {data: productList} = useProductListQuery(params);
+  console.log(productList)
+
   return (
     <div>
       <div className="flex justify-between items-center mb-4">
@@ -80,9 +87,9 @@ const page = () => {
           </Link>
         </Button>
       </div>
-      <Table dataSource={dataSource} columns={columns} />
+      <Table dataSource={productList?.data?.data} columns={columns} rowKey="id" />
     </div>
   );
 };
 
-export default page;
+export default ProductManagement;

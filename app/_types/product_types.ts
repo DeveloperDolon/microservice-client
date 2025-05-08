@@ -1,6 +1,7 @@
-export type ProductType = {
+export type ProductType<T> = {
+  id?: string;
   name: string;
-  images: File[];
+  images: T;
   discount?: number;
   price: number;
   description: string;
