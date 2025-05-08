@@ -1,11 +1,11 @@
 "use client";
 import React, { useState } from "react";
-import { Button, Table } from "antd";
+import { Button, Image, Table } from "antd";
 import { PlusCircleFilled } from "@ant-design/icons";
 import Link from "next/link";
 import Search from "antd/es/input/Search";
 import { useProductListQuery } from "@/app/_store/api/product.api";
-import Image from "next/image";
+
 import { ProductType } from "@/app/_types/product_types";
 
 const columns = [
@@ -15,10 +15,10 @@ const columns = [
     key: "images",
     render: (_: unknown, record: ProductType<string>) => {
       const imageArray = record?.images?.split(",");
-      
+      console.log(imageArray)
       return (
         <>
-          <Image 
+          <Image
             width={100}
             height={100}
             src={imageArray[0]}
