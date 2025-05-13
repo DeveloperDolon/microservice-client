@@ -4,14 +4,18 @@ import InputField from "@/app/_components/InputField";
 import React from "react";
 import { FormProvider, useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { product_validation_schema, ProductValidationType } from "@/app/_validations/product_validation";
-import { Button } from "antd";
+import {
+  product_validation_schema,
+  ProductValidationType,
+} from "@/app/_validations/product_validation";
+import { Button, message } from "antd";
 import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import { useBrandListQuery } from "@/app/_store/api/brand.api";
 import "@ant-design/v5-patch-for-react-19";
+import { useCreateProductMutation } from "@/app/_store/api/product.api";
 
 const Page = () => {
-
+  const [messageApi, contextHolder] = message.useMessage();
   const defaultValues: ProductValidationType = {
     name: "",
     images: [] as File[],
@@ -25,36 +29,79 @@ const Page = () => {
 
   const methods = useForm<ProductValidationType>({
     resolver: zodResolver(product_validation_schema),
-    defaultValues
+    defaultValues,
   });
 
   const { data: brands } = useBrandListQuery({});
+  const [createProduct] = useCreateProductMutation();
 
   const { fields, append, remove } = useFieldArray({
     control: methods.control,
     name: "variants",
   });
 
-  const onSubmit = (data: ProductValidationType) => {
-    console.log("Form Data:", data);
+  const onSubmit = async (data: ProductValidationType) => {
+    try {
+      console.log("hello");
+      messageApi.open({
+        key: "product-create",
+        type: "loading",
+        content: "Product adding...",
+      });
+      const formData = new FormData();
 
-    const formData = new FormData();
+      Object.entries(data).forEach(([key, value]) => {
+        if (key === ("images" as keyof ProductValidationType)) {
+          if (Array.isArray(value)) {
+            (value as File[]).forEach((file: File, index: number) => {
+              formData.append(`images[${index}]`, file);
+            });
+          }
+        } else if (key === "variants") {
+          formData.append(key, JSON.stringify(value));
+        } else {
+          formData.append(key, String(value));
+        }
+      });
 
-    Object.entries(data).forEach(([key, value]) => {
-      if (key === ("images" as keyof ProductValidationType)) {
-        if (Array.isArray(value)) {
-          (value as File[]).forEach((file: File, index: number) => {
-            formData.append(`images[${index}]`, file);
+      const result = await createProduct(formData);
+      console.log(result);
+      if (result?.data?.success) {
+        messageApi.open({
+          key: "product-create",
+          type: "success",
+          content: "Product created successful!",
+        });
+      } else {
+        if (result.error && "data" in result.error) {
+          const errorMessage =
+            result.error?.data &&
+            typeof result.error.data === "object" &&
+            "message" in result.error.data
+              ? result.error.data.message
+              : "An unknown error occurred.";
+          messageApi.open({
+            key: "product-create",
+            type: "error",
+            content: JSON.stringify(errorMessage),
           });
         }
-      } else if (key === "variants") {
-        formData.append(key, JSON.stringify(value));
-      } else {
-        formData.append(key, String(value));
       }
-    });
-
-    
+    } catch (err) {
+      if (err instanceof Error) {
+        messageApi.open({
+          key: "product-create",
+          type: "error",
+          content: JSON.stringify(err.message),
+        });
+      } else {
+        messageApi.open({
+          key: "product-create",
+          type: "error",
+          content: "An unknown error occurred.",
+        });
+      }
+    }
   };
 
   const addVariant = () => {
@@ -67,6 +114,7 @@ const Page = () => {
 
   return (
     <div>
+      {contextHolder}
       <h1 className="md:text-2xl text-lg font-bold text-center">
         Create Product
       </h1>
