@@ -5,7 +5,6 @@ import React from "react";
 import { FormProvider, useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { product_validation_schema, ProductValidationType } from "@/app/_validations/product_validation";
-import { ProductType } from "@/app/_types/product_types";
 import { Button } from "antd";
 import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import { useBrandListQuery } from "@/app/_store/api/brand.api";
@@ -13,11 +12,20 @@ import "@ant-design/v5-patch-for-react-19";
 
 const Page = () => {
 
+  const defaultValues: ProductValidationType = {
+    name: "",
+    images: [] as File[],
+    price: 1,
+    description: "",
+    discount_type: "percentage",
+    shipping_cost: 0,
+    brand_id: "",
+    variants: [],
+  };
+
   const methods = useForm<ProductValidationType>({
     resolver: zodResolver(product_validation_schema),
-    defaultValues: {
-      variants: [],
-    },
+    defaultValues
   });
 
   const { data: brands } = useBrandListQuery({});
@@ -46,6 +54,8 @@ const Page = () => {
         formData.append(key, String(value));
       }
     });
+
+    
   };
 
   const addVariant = () => {
