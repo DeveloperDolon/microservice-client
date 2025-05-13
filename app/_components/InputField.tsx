@@ -1,10 +1,14 @@
 "use client";
 
-import { Input, Select } from "antd";
+import { GetProp, Input, Select, Upload, UploadFile, UploadProps } from "antd";
 import Checkbox from "antd/es/checkbox/Checkbox";
 import TextArea from "antd/es/input/TextArea";
 import { Controller, RegisterOptions, useFormContext } from "react-hook-form";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
+import ImgCrop from "antd-img-crop";
+import { useState } from "react";
+
+type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
 
 interface InputFieldProps {
   name: string;
@@ -32,6 +36,27 @@ const InputField = ({
     control,
     formState: { errors },
   } = useFormContext();
+  const [fileList, setFileList] = useState<UploadFile[]>([]);
+
+  const onChange: UploadProps["onChange"] = ({ fileList: newFileList }) => {
+    console.log(newFileList);
+    setFileList(newFileList);
+  };
+
+  const onPreview = async (file: UploadFile) => {
+    let src = file.url as string;
+    if (!src) {
+      src = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file.originFileObj as FileType);
+        reader.onload = () => resolve(reader.result as string);
+      });
+    }
+    const image = new Image();
+    image.src = src;
+    const imgWindow = window.open(src);
+    imgWindow?.document.write(image.outerHTML);
+  };
 
   const getError = (fieldName: string) => {
     const fields = fieldName.split(".");
@@ -143,6 +168,35 @@ const InputField = ({
                     placeholder={placeholder}
                     options={selectOptions}
                   />
+                </>
+              );
+
+            case "images":
+              return (
+                <>
+                  <label htmlFor={name} className="text-sm inline-block pb-1">
+                    {label}
+                  </label>
+                  <ImgCrop rotationSlider>
+                    <Upload
+                      {...field}
+                      listType="picture-card"
+                      fileList={fileList}
+                      onChange={({ fileList }) => {
+                        onChange({
+                          file: fileList[fileList.length - 1],
+                          fileList,
+                        });
+                        field.onChange(
+                          fileList.map((file) => file.originFileObj)
+                        );
+                      }}
+                      onPreview={onPreview}
+                      beforeUpload={() => false}
+                    >
+                      {fileList.length < 5 && "+ Upload"}
+                    </Upload>
+                  </ImgCrop>
                 </>
               );
             default:

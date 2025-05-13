@@ -2,77 +2,72 @@
 
 import InputField from "@/app/_components/InputField";
 import React, { useState } from "react";
-import { Controller, FormProvider, useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { product_validation_schema } from "@/app/_validations/product_validation";
 import { ProductType } from "@/app/_types/product_types";
-import { Button, GetProp, Upload, UploadFile, UploadProps } from "antd";
+import { Button } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
-import ImgCrop from "antd-img-crop";
 import { useBrandListQuery } from "@/app/_store/api/brand.api";
-
-type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
+import "@ant-design/v5-patch-for-react-19";
 
 const Page = () => {
   const [variants, setVariants] = useState<React.ReactNode[]>([]);
-
+  const [variantCount, setVariantCount] = useState(0);
+  
   const methods = useForm<ProductType<File[]>>({
     resolver: zodResolver(product_validation_schema),
+    defaultValues: {
+      variants: [],
+    },
   });
 
   const { data: brands } = useBrandListQuery({});
 
   const onSubmit = (data: ProductType<File[]>) => {
-    console.log(data);
-  };
+    console.log("Form Data:", data);
+    console.log("Form Errors:", methods.formState.errors);
 
-  const [fileList, setFileList] = useState<UploadFile[]>([
-    {
-      uid: "-1",
-      name: "image.png",
-      status: "done",
-      url: "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png",
-    },
-  ]);
+    const formData = new FormData();
 
-  const onChange: UploadProps["onChange"] = ({ fileList: newFileList }) => {
-    setFileList(newFileList);
-  };
-
-  const onPreview = async (file: UploadFile) => {
-    let src = file.url as string;
-    if (!src) {
-      src = await new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file.originFileObj as FileType);
-        reader.onload = () => resolve(reader.result as string);
-      });
-    }
-    const image = new Image();
-    image.src = src;
-    const imgWindow = window.open(src);
-    imgWindow?.document.write(image.outerHTML);
+    Object.entries(data).forEach(([key, value]) => {
+      if (key === ("images" as keyof ProductType<File[]>)) {
+        if (Array.isArray(value)) {
+          (value as File[]).forEach((file: File, index: number) => {
+            formData.append(`images[${index}]`, file);
+          });
+        }
+      } else if (key === "variants") {
+        formData.append(key, JSON.stringify(value));
+      } else {
+        formData.append(key, String(value));
+      }
+    });
   };
 
   const addVariant = () => {
+    const newCount = variantCount + 1;
+    setVariantCount(newCount);
+
     const variant = (
-      <div className="grid md:grid-cols-3 grid-cols-1 md:gap-10 gap-4 w-full">
+      <div
+        className="grid md:grid-cols-3 grid-cols-1 md:gap-10 gap-4 w-full"
+        key={newCount}
+      >
         <InputField
-          name="variants.name[]"
+          name={`variants.${newCount}.name`}
           label="Variant name"
           placeholder="Enter variant name"
           type="text"
         />
-
         <InputField
-          name="variants.stock[]"
+          name={`variants.${newCount}.stock`}
           label="Variant stock"
           placeholder="Enter variant stock"
           type="number"
         />
-
         <InputField
-          name="variants.price[]"
+          name={`variants.${newCount}.price`}
           label="Variant price"
           placeholder="Enter variant price"
           type="number"
@@ -181,34 +176,12 @@ const Page = () => {
             )}
           />
 
-          <div>
-            <label htmlFor="images" className="text-sm inline-block pb-1">
-              Images
-            </label>
-            <Controller
-              name="images"
-              control={methods.control}
-              render={({ field }) => (
-                <ImgCrop rotationSlider>
-                  <Upload
-                    {...field}
-                    action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
-                    listType="picture-card"
-                    fileList={fileList}
-                    onChange={onChange}
-                    onPreview={onPreview}
-                  >
-                    {fileList.length < 5 && "+ Upload"}
-                  </Upload>
-                </ImgCrop>
-              )}
-            />
-            {methods.formState.errors.images && (
-              <p className="md:text-sm text-xs font-light text-red-500">
-                {methods.formState.errors.images.message}
-              </p>
-            )}
-          </div>
+          <InputField
+            name="images"
+            label="Product images"
+            placeholder="Product images"
+            type="images"
+          />
 
           <InputField
             name="description"

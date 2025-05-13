@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const product_validation_schema = z.object({
   name: z.string().min(1, "Product name is required"),
-  images: z.array(z.instanceof(File)).min(1, "At least one image is required"),
+  images: z.array(z.instanceof(File)).optional(),
   discount: z.number().optional(),
   price: z.number().min(1, "Price is required"),
   description: z.string().min(50, "Description must be at least 50 characters"),
