@@ -1,21 +1,19 @@
 "use client";
 
 import InputField from "@/app/_components/InputField";
-import React, { useState } from "react";
-import { FormProvider, useForm } from "react-hook-form";
+import React from "react";
+import { FormProvider, useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { product_validation_schema } from "@/app/_validations/product_validation";
+import { product_validation_schema, ProductValidationType } from "@/app/_validations/product_validation";
 import { ProductType } from "@/app/_types/product_types";
 import { Button } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
+import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import { useBrandListQuery } from "@/app/_store/api/brand.api";
 import "@ant-design/v5-patch-for-react-19";
 
 const Page = () => {
-  const [variants, setVariants] = useState<React.ReactNode[]>([]);
-  const [variantCount, setVariantCount] = useState(0);
-  
-  const methods = useForm<ProductType<File[]>>({
+
+  const methods = useForm<ProductValidationType>({
     resolver: zodResolver(product_validation_schema),
     defaultValues: {
       variants: [],
@@ -24,14 +22,19 @@ const Page = () => {
 
   const { data: brands } = useBrandListQuery({});
 
-  const onSubmit = (data: ProductType<File[]>) => {
+  const { fields, append, remove } = useFieldArray({
+    control: methods.control,
+    name: "variants",
+  });
+
+  const onSubmit = (data: ProductValidationType) => {
     console.log("Form Data:", data);
     console.log("Form Errors:", methods.formState.errors);
 
     const formData = new FormData();
 
     Object.entries(data).forEach(([key, value]) => {
-      if (key === ("images" as keyof ProductType<File[]>)) {
+      if (key === ("images" as keyof ProductValidationType)) {
         if (Array.isArray(value)) {
           (value as File[]).forEach((file: File, index: number) => {
             formData.append(`images[${index}]`, file);
@@ -46,35 +49,11 @@ const Page = () => {
   };
 
   const addVariant = () => {
-    const newCount = variantCount + 1;
-    setVariantCount(newCount);
-
-    const variant = (
-      <div
-        className="grid md:grid-cols-3 grid-cols-1 md:gap-10 gap-4 w-full"
-        key={newCount}
-      >
-        <InputField
-          name={`variants.${newCount}.name`}
-          label="Variant name"
-          placeholder="Enter variant name"
-          type="text"
-        />
-        <InputField
-          name={`variants.${newCount}.stock`}
-          label="Variant stock"
-          placeholder="Enter variant stock"
-          type="number"
-        />
-        <InputField
-          name={`variants.${newCount}.price`}
-          label="Variant price"
-          placeholder="Enter variant price"
-          type="number"
-        />
-      </div>
-    );
-    setVariants((prevVariants) => [...prevVariants, variant]);
+    append({
+      name: "",
+      stock: 0,
+      price: 0,
+    });
   };
 
   return (
@@ -206,8 +185,39 @@ const Page = () => {
 
           <div className="col-span-2 space-y-4 shadow-lg p-6 rounded-lg">
             <h1 className="md:text-xl text-lg font-semibold">Variants</h1>
-            {variants.map((variant, index) => (
-              <React.Fragment key={index}>{variant}</React.Fragment>
+            {fields.map((field, index) => (
+              <div
+                className="grid md:grid-cols-3 grid-cols-1 md:gap-10 gap-4 w-full"
+                key={field.id}
+              >
+                <InputField
+                  name={`variants.${index}.name`}
+                  label="Variant name"
+                  placeholder="Enter variant name"
+                  type="text"
+                />
+                <InputField
+                  name={`variants.${index}.stock`}
+                  label="Variant stock"
+                  placeholder="Enter variant stock"
+                  type="number"
+                />
+                <InputField
+                  name={`variants.${index}.price`}
+                  label="Variant price"
+                  placeholder="Enter variant price"
+                  type="number"
+                />
+                <Button
+                  danger
+                  type="primary"
+                  onClick={() => remove(index)}
+                  icon={<DeleteOutlined />}
+                  className="md:col-span-3"
+                >
+                  Remove Variant
+                </Button>
+              </div>
             ))}
 
             <Button

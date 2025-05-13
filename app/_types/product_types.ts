@@ -1,7 +1,7 @@
-export type ProductType<T> = {
+export type ProductType = {
   id?: string;
   name: string;
-  images?: T;
+  images: string;
   discount?: number;
   price: number;
   description: string;

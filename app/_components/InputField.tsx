@@ -36,8 +36,9 @@ const InputField = ({
     control,
     formState: { errors },
   } = useFormContext();
-  const [fileList, setFileList] = useState<UploadFile[]>([]);
 
+  const [fileList, setFileList] = useState<UploadFile[]>([]);
+  
   const onChange: UploadProps["onChange"] = ({ fileList: newFileList }) => {
     console.log(newFileList);
     setFileList(newFileList);
