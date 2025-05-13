@@ -12,7 +12,7 @@ export type ProductType = {
   seller_id: string;
   likes?: number;
   brand_id: string;
-  variants?: {
+  variants: {
     name: string;
     stock: number;
     price: number;

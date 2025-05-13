@@ -42,7 +42,6 @@ const Page = () => {
 
   const onSubmit = async (data: ProductValidationType) => {
     try {
-      console.log("hello");
       messageApi.open({
         key: "product-create",
         type: "loading",
@@ -64,8 +63,11 @@ const Page = () => {
         }
       });
 
+      formData.append("_method", "PUT");
+
       const result = await createProduct(formData);
       console.log(result);
+
       if (result?.data?.success) {
         messageApi.open({
           key: "product-create",

@@ -19,8 +19,7 @@ export const product_validation_schema = z.object({
         stock: z.number(),
         price: z.number(),
       })
-    )
-    .optional(),
+    ),
 });
 
 export type ProductValidationType = z.infer<typeof product_validation_schema>;
