@@ -40,7 +40,6 @@ const InputField = ({
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   
   const onChange: UploadProps["onChange"] = ({ fileList: newFileList }) => {
-    console.log(newFileList);
     setFileList(newFileList);
   };
 

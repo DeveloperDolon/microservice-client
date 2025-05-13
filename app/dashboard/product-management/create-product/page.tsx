@@ -37,7 +37,6 @@ const Page = () => {
 
   const onSubmit = (data: ProductValidationType) => {
     console.log("Form Data:", data);
-    console.log("Form Errors:", methods.formState.errors);
 
     const formData = new FormData();
 
