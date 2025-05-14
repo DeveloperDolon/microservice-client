@@ -76,6 +76,7 @@ const Page = () => {
           type: "success",
           content: "Product created successful!",
         });
+        methods.reset();
       } else {
         if (result.error && "data" in result.error) {
           const errorMessage =
