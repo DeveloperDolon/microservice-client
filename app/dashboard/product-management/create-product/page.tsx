@@ -1,89 +1,124 @@
 "use client";
 
 import InputField from "@/app/_components/InputField";
-import React, { useState } from "react";
-import { Controller, FormProvider, useForm } from "react-hook-form";
+import React from "react";
+import { FormProvider, useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { product_validation_schema } from "@/app/_validations/product_validation";
-import { ProductType } from "@/app/_types/product_types";
-import { Button, GetProp, Upload, UploadFile, UploadProps } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
-import ImgCrop from "antd-img-crop";
+import {
+  product_validation_schema,
+  ProductValidationType,
+} from "@/app/_validations/product_validation";
+import { Button, message } from "antd";
+import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import { useBrandListQuery } from "@/app/_store/api/brand.api";
-
-type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
+import "@ant-design/v5-patch-for-react-19";
+import { useCreateProductMutation } from "@/app/_store/api/product.api";
 
 const Page = () => {
-  const [variants, setVariants] = useState<React.ReactNode[]>([]);
+  const [messageApi, contextHolder] = message.useMessage();
+  const defaultValues: ProductValidationType = {
+    name: "",
+    images: [] as File[],
+    price: 1,
+    description: "",
+    discount_type: "percentage",
+    shipping_cost: 0,
+    brand_id: "",
+    variants: [],
+    discount: 0
+  };
 
-  const methods = useForm<ProductType<File[]>>({
+  const methods = useForm<ProductValidationType>({
     resolver: zodResolver(product_validation_schema),
+    defaultValues,
   });
 
   const { data: brands } = useBrandListQuery({});
+  const [createProduct] = useCreateProductMutation();
 
-  const onSubmit = (data: ProductType<File[]>) => {
-    console.log(data);
-  };
+  const { fields, append, remove } = useFieldArray({
+    control: methods.control,
+    name: "variants",
+  });
 
-  const [fileList, setFileList] = useState<UploadFile[]>([
-    {
-      uid: "-1",
-      name: "image.png",
-      status: "done",
-      url: "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png",
-    },
-  ]);
-
-  const onChange: UploadProps["onChange"] = ({ fileList: newFileList }) => {
-    setFileList(newFileList);
-  };
-
-  const onPreview = async (file: UploadFile) => {
-    let src = file.url as string;
-    if (!src) {
-      src = await new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file.originFileObj as FileType);
-        reader.onload = () => resolve(reader.result as string);
+  const onSubmit = async (data: ProductValidationType) => {
+    try {
+      messageApi.open({
+        key: "product-create",
+        type: "loading",
+        content: "Product adding...",
       });
+
+      const formData = new FormData();
+
+      Object.entries(data).forEach(([key, value]) => {
+        if (key === ("images" as keyof ProductValidationType)) {
+          if (Array.isArray(value)) {
+            (value as File[]).forEach((file: File, index: number) => {
+              formData.append(`images[${index}]`, file);
+            });
+          }
+        } else if (key === "variants") {
+          formData.append(key, JSON.stringify(value));
+        } else {
+          formData.append(key, String(value));
+        }
+      });
+
+      // formData.append("_method", "PUT");
+   
+      const result = await createProduct(formData);
+      console.log(result);
+
+      if (result?.data?.success) {
+        messageApi.open({
+          key: "product-create",
+          type: "success",
+          content: "Product created successful!",
+        });
+      } else {
+        if (result.error && "data" in result.error) {
+          const errorMessage =
+            result.error?.data &&
+            typeof result.error.data === "object" &&
+            "message" in result.error.data
+              ? result.error.data.message
+              : "An unknown error occurred.";
+          messageApi.open({
+            key: "product-create",
+            type: "error",
+            content: JSON.stringify(errorMessage),
+          });
+        }
+      }
+    } catch (err) {
+      if (err instanceof Error) {
+        messageApi.open({
+          key: "product-create",
+          type: "error",
+          content: JSON.stringify(err.message),
+        });
+      } else {
+        messageApi.open({
+          key: "product-create",
+          type: "error",
+          content: "An unknown error occurred.",
+        });
+      }
     }
-    const image = new Image();
-    image.src = src;
-    const imgWindow = window.open(src);
-    imgWindow?.document.write(image.outerHTML);
   };
 
   const addVariant = () => {
-    const variant = (
-      <div className="grid md:grid-cols-3 grid-cols-1 md:gap-10 gap-4 w-full">
-        <InputField
-          name="variants.name[]"
-          label="Variant name"
-          placeholder="Enter variant name"
-          type="text"
-        />
-
-        <InputField
-          name="variants.stock[]"
-          label="Variant stock"
-          placeholder="Enter variant stock"
-          type="number"
-        />
-
-        <InputField
-          name="variants.price[]"
-          label="Variant price"
-          placeholder="Enter variant price"
-          type="number"
-        />
-      </div>
-    );
-    setVariants((prevVariants) => [...prevVariants, variant]);
+    append({
+      name: "",
+      stock: 0,
+      price: 0,
+    });
   };
 
   return (
     <div>
+      {contextHolder}
       <h1 className="md:text-2xl text-lg font-bold text-center">
         Create Product
       </h1>
@@ -181,34 +216,12 @@ const Page = () => {
             )}
           />
 
-          <div>
-            <label htmlFor="images" className="text-sm inline-block pb-1">
-              Images
-            </label>
-            <Controller
-              name="images"
-              control={methods.control}
-              render={({ field }) => (
-                <ImgCrop rotationSlider>
-                  <Upload
-                    {...field}
-                    action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
-                    listType="picture-card"
-                    fileList={fileList}
-                    onChange={onChange}
-                    onPreview={onPreview}
-                  >
-                    {fileList.length < 5 && "+ Upload"}
-                  </Upload>
-                </ImgCrop>
-              )}
-            />
-            {methods.formState.errors.images && (
-              <p className="md:text-sm text-xs font-light text-red-500">
-                {methods.formState.errors.images.message}
-              </p>
-            )}
-          </div>
+          <InputField
+            name="images"
+            label="Product images"
+            placeholder="Product images"
+            type="images"
+          />
 
           <InputField
             name="description"
@@ -233,8 +246,39 @@ const Page = () => {
 
           <div className="col-span-2 space-y-4 shadow-lg p-6 rounded-lg">
             <h1 className="md:text-xl text-lg font-semibold">Variants</h1>
-            {variants.map((variant, index) => (
-              <React.Fragment key={index}>{variant}</React.Fragment>
+            {fields.map((field, index) => (
+              <div
+                className="grid md:grid-cols-3 grid-cols-1 md:gap-10 gap-4 w-full"
+                key={field.id}
+              >
+                <InputField
+                  name={`variants.${index}.name`}
+                  label="Variant name"
+                  placeholder="Enter variant name"
+                  type="text"
+                />
+                <InputField
+                  name={`variants.${index}.stock`}
+                  label="Variant stock"
+                  placeholder="Enter variant stock"
+                  type="number"
+                />
+                <InputField
+                  name={`variants.${index}.price`}
+                  label="Variant price"
+                  placeholder="Enter variant price"
+                  type="number"
+                />
+                <Button
+                  danger
+                  type="primary"
+                  onClick={() => remove(index)}
+                  icon={<DeleteOutlined />}
+                  className="md:col-span-3"
+                >
+                  Remove Variant
+                </Button>
+              </div>
             ))}
 
             <Button
