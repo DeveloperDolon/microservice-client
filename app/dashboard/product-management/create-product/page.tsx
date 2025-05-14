@@ -25,6 +25,7 @@ const Page = () => {
     shipping_cost: 0,
     brand_id: "",
     variants: [],
+    discount: 0
   };
 
   const methods = useForm<ProductValidationType>({
@@ -47,6 +48,7 @@ const Page = () => {
         type: "loading",
         content: "Product adding...",
       });
+
       const formData = new FormData();
 
       Object.entries(data).forEach(([key, value]) => {
@@ -63,8 +65,8 @@ const Page = () => {
         }
       });
 
-      formData.append("_method", "PUT");
-
+      // formData.append("_method", "PUT");
+   
       const result = await createProduct(formData);
       console.log(result);
 

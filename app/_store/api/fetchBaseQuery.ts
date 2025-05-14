@@ -3,13 +3,17 @@ import { BaseQueryApi } from "@reduxjs/toolkit/query";
 
 const baseQuery = fetchBaseQuery({
   baseUrl: process.env.NEXT_PUBLIC_API_URL,
-  prepareHeaders: (headers) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  prepareHeaders: (headers, { getState, extra, endpoint, type, forced, arg }) => {
     const token =
       typeof window !== "undefined" ? localStorage.getItem("authToken") : null;
     if (token) {
       headers.set("Authorization", `Bearer ${token}`);
     }
-    headers.set("Content-Type", "application/json");
+    const body = typeof arg === "object" && "body" in arg ? arg.body : null;
+    if (!(body instanceof FormData)) {
+      headers.set("Content-Type", "application/json");
+    }
     return headers;
   },
   fetchFn: async (input, init) => {
