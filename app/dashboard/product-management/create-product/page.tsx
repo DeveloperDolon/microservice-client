@@ -13,6 +13,7 @@ import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import { useBrandListQuery } from "@/app/_store/api/brand.api";
 import "@ant-design/v5-patch-for-react-19";
 import { useCreateProductMutation } from "@/app/_store/api/product.api";
+import Link from "next/link";
 
 const Page = () => {
   const [messageApi, contextHolder] = message.useMessage();
@@ -25,7 +26,7 @@ const Page = () => {
     shipping_cost: 0,
     brand_id: "",
     variants: [],
-    discount: 0
+    discount: 0,
   };
 
   const methods = useForm<ProductValidationType>({
@@ -66,7 +67,7 @@ const Page = () => {
       });
 
       // formData.append("_method", "PUT");
-   
+
       const result = await createProduct(formData);
       console.log(result);
 
@@ -76,6 +77,7 @@ const Page = () => {
           type: "success",
           content: "Product created successful!",
         });
+        methods.reset();
       } else {
         if (result.error && "data" in result.error) {
           const errorMessage =
@@ -118,6 +120,9 @@ const Page = () => {
 
   return (
     <div>
+      <Link href={"/dashboard/product-management"}>
+        <Button>Back</Button>
+      </Link>
       {contextHolder}
       <h1 className="md:text-2xl text-lg font-bold text-center">
         Create Product

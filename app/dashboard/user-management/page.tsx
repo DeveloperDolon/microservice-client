@@ -1,48 +1,45 @@
 "use client";
-import { PlusCircleFilled } from "@ant-design/icons";
-
-import { useProductListQuery } from "@/app/_store/api/product.api";
-import { ProductType } from "@/app/_types/product_types";
 
 import { Button, Image, Table } from "antd";
 import Search from "antd/es/input/Search";
 import Link from "next/link";
+import { PlusCircleFilled } from "@ant-design/icons";
 import React, { useState } from "react";
+import { useUserListQuery } from "@/app/_store/api/user.api";
+import { UserType } from "@/app/_types/user_types";
 
 const columns = [
   {
-    title: "Product Image",
-    dataIndex: "images",
-    key: "images",
-    render: (_: unknown, record: ProductType) => {
-      const imageArray = record?.images?.split(",");
-
+    title: "Picture",
+    dataIndex: "profile_picture",
+    key: "profile_picture",
+    render: (_: unknown, record: UserType<string>) => {
       return (
         <>
           <Image
             width={100}
             height={100}
-            src={imageArray[0]}
-            alt="Product-Image"
+            src={record?.profile_picture}
+            alt="Profile-Image"
           />
         </>
-      )
-    }
+      );
+    },
   },
   {
-    title: "Product Name",
+    title: "Name",
     dataIndex: "name",
     key: "name",
   },
   {
-    title: "Price (BDT)",
-    dataIndex: "price",
-    key: "price",
+    title: "Email",
+    dataIndex: "email",
+    key: "email",
   },
   {
-    title: "Seller Name",
-    dataIndex: "seller?.name",
-    key: "seller?.name",
+    title: "Role",
+    dataIndex: "role.name",
+    key: "role.name",
   },
   {
     title: "Action",
@@ -63,15 +60,16 @@ const columns = [
   },
 ];
 
-const ProductManagement = () => {
+const Page = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [params, setParams] = useState({page: 1, limit: 10});
-  const {data: productList} = useProductListQuery(params);
+  const [params, setParams] = useState({ page: 1, limit: 10 });
+  const { data: userList } = useUserListQuery(params);
+  console.log(userList);
 
   return (
     <div>
       <div className="flex justify-between items-center mb-4">
-        <h1 className="md:text-2xl text-lg font-bold">Product Management</h1>
+        <h1 className="md:text-2xl text-lg font-bold">User Management</h1>
 
         <Search
           className="md:w-[500px] w-[300px]"
@@ -82,14 +80,14 @@ const ProductManagement = () => {
         />
 
         <Button type="primary" icon={<PlusCircleFilled />} size={"large"}>
-          <Link href={`/dashboard/product-management/create-product`}>
-            <span className="hidden md:inline">Create Product</span>
+          <Link href={`/dashboard/user-management/create-user`}>
+            <span className="hidden md:inline">Create User</span>
           </Link>
         </Button>
       </div>
-      <Table dataSource={productList?.data?.data} columns={columns} rowKey="id" />
+      <Table dataSource={userList?.data} columns={columns} rowKey="id" />
     </div>
   );
 };
 
-export default ProductManagement;
+export default Page;
