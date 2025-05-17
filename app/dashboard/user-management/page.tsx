@@ -1,26 +1,26 @@
 "use client";
 
-import { BrandType } from "@/app/_types/brand_types";
 import { Button, Image, Table } from "antd";
 import Search from "antd/es/input/Search";
 import Link from "next/link";
 import { PlusCircleFilled } from "@ant-design/icons";
 import React, { useState } from "react";
-import { useBrandListQuery } from "@/app/_store/api/brand.api";
+import { useUserListQuery } from "@/app/_store/api/user.api";
+import { UserType } from "@/app/_types/user_types";
 
 const columns = [
   {
-    title: "Logo",
-    dataIndex: "logo",
-    key: "logo",
-    render: (_: unknown, record: BrandType<string>) => {
+    title: "Picture",
+    dataIndex: "profile_picture",
+    key: "profile_picture",
+    render: (_: unknown, record: UserType<string>) => {
       return (
         <>
           <Image
             width={100}
             height={100}
-            src={record?.logo}
-            alt="Brand-Logo-Image"
+            src={record?.profile_picture}
+            alt="Profile-Image"
           />
         </>
       );
@@ -32,9 +32,14 @@ const columns = [
     key: "name",
   },
   {
-    title: "Location",
-    dataIndex: "location",
-    key: "location",
+    title: "Email",
+    dataIndex: "email",
+    key: "email",
+  },
+  {
+    title: "Role",
+    dataIndex: "role.name",
+    key: "role.name",
   },
   {
     title: "Action",
@@ -58,7 +63,8 @@ const columns = [
 const Page = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [params, setParams] = useState({ page: 1, limit: 10 });
-  const { data: brandList } = useBrandListQuery(params);
+  const { data: userList } = useUserListQuery(params);
+  console.log(userList);
 
   return (
     <div>
@@ -79,7 +85,7 @@ const Page = () => {
           </Link>
         </Button>
       </div>
-      <Table dataSource={brandList?.data?.data} columns={columns} rowKey="id" />
+      <Table dataSource={userList?.data} columns={columns} rowKey="id" />
     </div>
   );
 };
