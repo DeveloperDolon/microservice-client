@@ -1,48 +1,40 @@
 "use client";
-import { PlusCircleFilled } from "@ant-design/icons";
 
-import { useProductListQuery } from "@/app/_store/api/product.api";
-import { ProductType } from "@/app/_types/product_types";
-
+import { BrandType } from "@/app/_types/brand_types";
 import { Button, Image, Table } from "antd";
 import Search from "antd/es/input/Search";
 import Link from "next/link";
+import { PlusCircleFilled } from "@ant-design/icons";
 import React, { useState } from "react";
+import { useBrandListQuery } from "@/app/_store/api/brand.api";
 
 const columns = [
   {
-    title: "Product Image",
-    dataIndex: "images",
-    key: "images",
-    render: (_: unknown, record: ProductType) => {
-      const imageArray = record?.images?.split(",");
-
+    title: "Logo",
+    dataIndex: "logo",
+    key: "logo",
+    render: (_: unknown, record: BrandType<string>) => {
       return (
         <>
           <Image
             width={100}
             height={100}
-            src={imageArray[0]}
-            alt="Product-Image"
+            src={record?.logo}
+            alt="Brand-Logo-Image"
           />
         </>
-      )
-    }
+      );
+    },
   },
   {
-    title: "Product Name",
+    title: "Name",
     dataIndex: "name",
     key: "name",
   },
   {
-    title: "Price (BDT)",
-    dataIndex: "price",
-    key: "price",
-  },
-  {
-    title: "Seller Name",
-    dataIndex: "seller?.name",
-    key: "seller?.name",
+    title: "Location",
+    dataIndex: "location",
+    key: "location",
   },
   {
     title: "Action",
@@ -63,15 +55,15 @@ const columns = [
   },
 ];
 
-const ProductManagement = () => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [params, setParams] = useState({page: 1, limit: 10});
-  const {data: productList} = useProductListQuery(params);
+const Page = () => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [params, setParams] = useState({page: 1, limit: 10});
+    const { data: brandList } = useBrandListQuery(params);
 
   return (
     <div>
       <div className="flex justify-between items-center mb-4">
-        <h1 className="md:text-2xl text-lg font-bold">Product Management</h1>
+        <h1 className="md:text-2xl text-lg font-bold">User Management</h1>
 
         <Search
           className="md:w-[500px] w-[300px]"
@@ -83,13 +75,13 @@ const ProductManagement = () => {
 
         <Button type="primary" icon={<PlusCircleFilled />} size={"large"}>
           <Link href={`/dashboard/product-management/create-product`}>
-            <span className="hidden md:inline">Create Product</span>
+            <span className="hidden md:inline">Create User</span>
           </Link>
         </Button>
       </div>
-      <Table dataSource={productList?.data?.data} columns={columns} rowKey="id" />
+      <Table dataSource={brandList?.data?.data} columns={columns} rowKey="id" />
     </div>
   );
 };
 
-export default ProductManagement;
+export default Page;
