@@ -56,9 +56,9 @@ const columns = [
 ];
 
 const Page = () => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [params, setParams] = useState({page: 1, limit: 10});
-    const { data: brandList } = useBrandListQuery(params);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [params, setParams] = useState({ page: 1, limit: 10 });
+  const { data: brandList } = useBrandListQuery(params);
 
   return (
     <div>
@@ -74,7 +74,7 @@ const Page = () => {
         />
 
         <Button type="primary" icon={<PlusCircleFilled />} size={"large"}>
-          <Link href={`/dashboard/product-management/create-product`}>
+          <Link href={`/dashboard/user-management/create-user`}>
             <span className="hidden md:inline">Create User</span>
           </Link>
         </Button>
